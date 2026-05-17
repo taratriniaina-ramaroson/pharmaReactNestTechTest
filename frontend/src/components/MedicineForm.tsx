@@ -10,7 +10,7 @@ export function MedicineForm({ onSubmit }: Props) {
     const [price, setPrice] = useState(0)
     const [stock, setStock] = useState(0)
 
-    function handleSubmit(e: React.FormEvent) {
+    function handleSubmit(e: React.SubmitEvent) {
         e.preventDefault()
 
         if (!name || price <= 0 || stock < 0) return
