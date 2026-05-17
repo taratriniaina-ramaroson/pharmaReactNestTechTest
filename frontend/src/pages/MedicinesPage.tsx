@@ -3,6 +3,7 @@ import { fetchMedicines, createMedicine, updateMedicine, deleteMedicine } from '
 import { MedicineForm } from '../components/MedicineForm'
 import { MedicineItem } from '../components/MedicineItem'
 import type { CreateMedicineDto } from '../types/medicine'
+import { toast } from 'sonner'
 
 export function MedicinesPage() {
     const queryClient = useQueryClient()
@@ -17,12 +18,18 @@ export function MedicinesPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['medicines'] })
         },
+        onError: () => {
+            toast.error('Failed to create medicine')
+        }
     })
 
     const updateMutation = useMutation({
         mutationFn: ({ id, data }: { id: number; data: CreateMedicineDto }) => updateMedicine(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['medicines'] })
+        },
+        onError: () => {
+            toast.error('Failed to update medicine')
         }
     })
 
@@ -31,6 +38,9 @@ export function MedicinesPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['medicines'] })
         },
+        onError: () => {
+            toast.error('Failed to delete medicine')
+        }
     })
 
     if (isLoading) return <p>Loading...</p>
