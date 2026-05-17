@@ -24,13 +24,19 @@ export function MedicinesPage() {
         <div>
             <MedicineForm onSubmit={mutation.mutate} />
 
-            <ul>
+            <table className="w-full mt-4 border-collapse table">
                 {data?.map((m) => (
-                    <li key={m.id}>
-                        {m.name} – {m.price} € – Stock: {m.stock}
-                    </li>
+                    <tr key={m.id} className="table-row-group hover:bg-slate-700 cursor-pointer">
+                        <td className='table-cell text-left pl-4'>{m.name}</td>
+                        <td className='table-cell'>{m.price} €</td>
+                        <td className='table-cell'>{m.stock}</td>
+                        <td className='table-cell gap-2'>
+                            <a href="#">Edit</a>
+                            <a href="#" className="text-red-500 ml-2">Delete</a>
+                        </td>
+                    </tr>
                 ))}
-            </ul>
+            </table>
         </div>
     )
 }

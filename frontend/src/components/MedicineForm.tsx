@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type {CreateMedicineDto} from '../types/medicine'
+import type { CreateMedicineDto } from '../types/medicine'
 
 interface Props {
     onSubmit: (data: CreateMedicineDto) => void
@@ -23,30 +23,48 @@ export function MedicineForm({ onSubmit }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h3>Add medicine</h3>
+        <form onSubmit={handleSubmit} className="p-4 border border-slate-100 rounded flex flex-col gap-2">
+            <h3 className="text-xl text-left">Add medicine</h3>
 
-            <input
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-            />
+            <div className="flex gap-2">
+                <div className="flex flex-col">
+                    <label htmlFor="name" className="text-left">Name</label>
+                    <input
+                        id="name"
+                        className="border-b border-slate-100 px-1 py-2"
+                        placeholder="Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
 
-            <input
-                type="number"
-                placeholder="Price"
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-            />
+                <div className="flex flex-col">
+                    <label htmlFor="price" className="text-left">Price</label>
+                    <input
+                        id="price"
+                        className="text-right border-b border-slate-100 px-1 py-2"
+                        type="number"
+                        step="0.01"
+                        placeholder="Price"
+                        value={price}
+                        onChange={(e) => setPrice(Number(e.target.value))}
+                    />
+                </div>
 
-            <input
-                type="number"
-                placeholder="Stock"
-                value={stock}
-                onChange={(e) => setStock(Number(e.target.value))}
-            />
+                <div className="flex flex-col">
+                    <label htmlFor="stock" className="text-left">Stock</label>
+                    <input
+                        id="stock"
+                        className="text-right border-b border-slate-100 px-1 py-2"
+                        type="number"
+                        placeholder="Stock"
+                        value={stock}
+                        onChange={(e) => setStock(Number(e.target.value))}
+                    />
+                </div>
 
-            <button type="submit">Add</button>
+                <button type="submit">Add</button>
+            </div>
         </form>
     )
 }
