@@ -1,5 +1,14 @@
 import { useState } from 'react'
+import { z } from 'zod'
 import type { CreateMedicineDto } from '../types/medicine'
+
+const medicineSchema = z.object({
+    name: z.string().min(1, 'Name is required'),
+    price: z.number().positive('Price must be greater than 0'),
+    stock: z.number().int().min(0, 'Stock must be 0 or more'),
+})
+
+type FormErrors = Partial<Record<keyof CreateMedicineDto, string>>
 
 interface Props {
     onSubmit: (data: CreateMedicineDto) => void
@@ -9,13 +18,25 @@ export function MedicineForm({ onSubmit }: Props) {
     const [name, setName] = useState('')
     const [price, setPrice] = useState(0)
     const [stock, setStock] = useState(0)
+    const [errors, setErrors] = useState<FormErrors>({})
 
-    function handleSubmit(e: React.SubmitEvent) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
 
-        if (!name || price <= 0 || stock < 0) return
+        const result = medicineSchema.safeParse({ name, price, stock })
 
-        onSubmit({ name, price, stock })
+        if (!result.success) {
+            const fieldErrors: FormErrors = {}
+            const flatErrors = result.error.flatten().fieldErrors
+            fieldErrors.name = flatErrors.name?.join(',')
+            fieldErrors.price = flatErrors.price?.join(',')
+            fieldErrors.stock = flatErrors.stock?.join(',')
+            setErrors(fieldErrors)
+            return
+        }
+
+        setErrors({})
+        onSubmit(result.data)
 
         setName('')
         setPrice(0)
@@ -36,6 +57,7 @@ export function MedicineForm({ onSubmit }: Props) {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
+                    {errors.name && <span className="text-red-400 text-sm text-left">{errors.name}</span>}
                 </div>
 
                 <div className="flex flex-col">
@@ -49,6 +71,7 @@ export function MedicineForm({ onSubmit }: Props) {
                         value={price}
                         onChange={(e) => setPrice(Number(e.target.value))}
                     />
+                    {errors.price && <span className="text-red-400 text-sm text-left">{errors.price}</span>}
                 </div>
 
                 <div className="flex flex-col">
@@ -61,6 +84,7 @@ export function MedicineForm({ onSubmit }: Props) {
                         value={stock}
                         onChange={(e) => setStock(Number(e.target.value))}
                     />
+                    {errors.stock && <span className="text-red-400 text-sm text-left">{errors.stock}</span>}
                 </div>
 
                 <button type="submit">Add</button>
