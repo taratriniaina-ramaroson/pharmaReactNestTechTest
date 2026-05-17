@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { z } from 'zod'
-import type { CreateMedicineDto } from '../types/medicine'
+import type { CreateMedicineDto, Medicine } from '../types/medicine'
 
 const medicineSchema = z.object({
     name: z.string().min(1, 'Name is required'),
@@ -12,12 +12,15 @@ type FormErrors = Partial<Record<keyof CreateMedicineDto, string>>
 
 interface Props {
     onSubmit: (data: CreateMedicineDto) => void
+    initialValues?: Medicine
 }
 
-export function MedicineForm({ onSubmit }: Props) {
-    const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
-    const [stock, setStock] = useState(0)
+export function MedicineForm({ onSubmit, initialValues }: Props) {
+    const isEditing = !!initialValues
+
+    const [name, setName] = useState(initialValues?.name ?? '')
+    const [price, setPrice] = useState(initialValues?.price ?? 0)
+    const [stock, setStock] = useState(initialValues?.stock ?? 0)
     const [errors, setErrors] = useState<FormErrors>({})
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,14 +41,16 @@ export function MedicineForm({ onSubmit }: Props) {
         setErrors({})
         onSubmit(result.data)
 
-        setName('')
-        setPrice(0)
-        setStock(0)
+        if (!isEditing) {
+            setName('')
+            setPrice(0)
+            setStock(0)
+        }
     }
 
     return (
         <form onSubmit={handleSubmit} className="p-4 border border-slate-100 rounded flex flex-col gap-2">
-            <h3 className="text-xl text-left">Add medicine</h3>
+            <h3 className="text-xl text-left">{isEditing ? 'Edit medicine' : 'Add medicine'}</h3>
 
             <div className="flex gap-2">
                 <div className="flex flex-col">
@@ -87,7 +92,7 @@ export function MedicineForm({ onSubmit }: Props) {
                     {errors.stock && <span className="text-red-400 text-sm text-left">{errors.stock}</span>}
                 </div>
 
-                <button type="submit">Add</button>
+                <button type="submit">{isEditing ? 'Save' : 'Add'}</button>
             </div>
         </form>
     )
